@@ -3,6 +3,7 @@ import axios from 'axios';
 
 function AttendanceStats() {
   const [stats, setStats] = useState([]);
+  const [filteredStats, setFilteredStats] = useState([]);
   const [period, setPeriod] = useState('semester');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -10,6 +11,7 @@ function AttendanceStats() {
   const [error, setError] = useState('');
   const [responseStartDate, setResponseStartDate] = useState('');
   const [responseEndDate, setResponseEndDate] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -29,6 +31,7 @@ function AttendanceStats() {
           headers: { Authorization: `Bearer ${token}` },
         });
         setStats(response.data.stats);
+        setFilteredStats(response.data.stats);
         setResponseStartDate(response.data.start_date);
         setResponseEndDate(response.data.end_date);
         setError('');
@@ -39,6 +42,17 @@ function AttendanceStats() {
     };
     fetchStats();
   }, [period, startDate, endDate, customRange]);
+
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    const lowerCaseQuery = query.toLowerCase();
+    const filtered = stats.filter(
+      (stat) =>
+        stat.name.toLowerCase().includes(lowerCaseQuery) ||
+        stat.roll_number.toString().includes(lowerCaseQuery)
+    );
+    setFilteredStats(filtered);
+  };
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
@@ -90,8 +104,17 @@ function AttendanceStats() {
           </div>
         )}
       </div>
+      <div className="mb-4">
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => handleSearch(e.target.value)}
+          placeholder="Search by name or roll number"
+          className="w-full p-2 border rounded-md text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
       <p className="text-gray-800 mb-4">Period: {responseStartDate} to {responseEndDate}</p>
-      {stats.length > 0 ? (
+      {filteredStats.length > 0 ? (
         <div className="overflow-x-auto">
           <table className="w-full bg-white rounded-lg shadow-md">
             <thead>
@@ -105,7 +128,7 @@ function AttendanceStats() {
               </tr>
             </thead>
             <tbody>
-              {stats.map((stat) => (
+              {filteredStats.map((stat) => (
                 <tr key={stat.student_id} className="border-t">
                   <td className="p-2 text-gray-800">{stat.name}</td>
                   <td className="p-2 text-gray-800">{stat.roll_number}</td>
