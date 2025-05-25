@@ -312,7 +312,7 @@ This software is proprietary and licensed exclusively to Manikchand Pahade law c
 
 ## 👏 Acknowledgments
 
-- Developed by [Pranav Sirsufale](https://www.linkedin.com/in/pranav-sirsufale-488ba4269/) ,[Rohan Managar](https://github.com/RohanMagar7)
+- Developed by [Pranav Sirsufale](https://www.linkedin.com/in/pranav-sirsufale-488ba4269/) ,[Rohan Magar](https://github.com/RohanMagar7)
 - Special thanks to [Dr. Bharti W. Gawali](https://bamu.irins.org/profile/57209) and the faculty and administrative staff for their input and testing feedback
 
 ---
