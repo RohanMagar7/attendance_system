@@ -27,4 +27,4 @@ jobs:
         pip install -r programme_attendance/programme_attendance/requirements.txt
     - name: Run Tests
       run: |
-        python manage.py test
+        programme_attendance/python manage.py test
