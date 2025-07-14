@@ -29,9 +29,10 @@ class Section(models.Model):
         verbose_name_plural = "Sections"
 
 class Subject(models.Model):
-    name = models.CharField(max_length=100 , unique=True,null= False , blank=False )  # e.g., "Law of Contract I"
-    is_law_subject = models.BooleanField(default=True , blank=False)  # True for law, False for non-law
-    semester = models.PositiveIntegerField()  # 1 to 10 (depending on program)
+    name = models.CharField(max_length=100 , unique=True,null= False , blank=False )
+    is_law_subject = models.BooleanField(default=True , blank=False)
+    semester = models.PositiveIntegerField()
+    program = models.ForeignKey(Program, on_delete=models.CASCADE, related_name="subjects")
     def __str__(self):
         return self.name
     class Meta:
@@ -70,6 +71,10 @@ class Student(models.Model):
     class Meta:
         verbose_name = "Student"
         verbose_name_plural = "Students"
+        indexes = [
+            models.Index(fields=["roll_number"]),
+            models.Index(fields=["semester"])
+        ]
 
 class Timetable(models.Model):
     DAY_CHOICES = [

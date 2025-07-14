@@ -47,6 +47,7 @@ function TimetableCRUD({notifyUser}) {
       const response = await axios.get(`http://localhost:8000/api/admin/${resource}/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      // console.log(response)
       setItems(response.data);
       setError("");
       if(response.status >= 200 && response.status <= 300){
