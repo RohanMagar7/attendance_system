@@ -324,6 +324,6 @@ This software is proprietary and licensed exclusively to Manikchand Pahade law c
   <p>
     <a href="https://hashnode.com/@pranavsirsufale">Hashnode</a> •
     <a href="https://www.linkedin.com/in/pranav-sirsufale-488ba4269/">Linkedin</a> •
-    <a href="https://github.com/pranavsirsufale">Linkedin</a>
+    <a href="https://github.com/pranavsirsufale">Github</a>
   </p>
 </div>
