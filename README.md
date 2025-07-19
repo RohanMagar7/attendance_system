@@ -322,7 +322,7 @@ This software is proprietary and licensed exclusively to Manikchand Pahade law c
 <div align="center">
   <p>© 2025 Manikchan Pahade Law College. Chh. Sambhajinagar All Rights Reserved by Pranav Sirsufale.</p>
   <p>
-    <a href="https://yourwebsite.edu">Website</a> •
+    <a href="https://hashnode.com/@pranavsirsufale">Hashnode</a> •
     <a href="https://www.linkedin.com/in/pranav-sirsufale-488ba4269/">Linkedin</a> •
     <a href="https://github.com/pranavsirsufale">Linkedin</a>
   </p>
