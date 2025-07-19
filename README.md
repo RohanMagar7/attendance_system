@@ -172,11 +172,11 @@ Response:
   "results": [
     {
       "id": 1,
-      "student": "John Doe",
+      "student": "Pranav Sirsufale",
       "session": "Constitutional Law (Mon, 9:00 AM)",
       "status": "present",
       "timestamp": "2025-04-01T09:15:00Z",
-      "recorded_by": "Prof. Smith"
+      "recorded_by": "C. M. Rao"
     },
     // More records...
   ]
@@ -298,7 +298,7 @@ Regular database backups are essential:
 mysqldump -u root -p law_college > attendance_backup_$(date +%Y%m%d).sql
 
 # Restore from backup
-mysql -u root -p law_college < attendance_backup_20250401.sql
+mysql -u root -p law_college < {created unique database name}.sql
 ```
 
 ## 🆘 Support and Maintenance
@@ -314,7 +314,7 @@ This software is proprietary and licensed exclusively to Manikchand Pahade law c
 
 ## 👏 Acknowledgments
 
-- Developed by [Pranav Sirsufale](https://www.linkedin.com/in/pranav-sirsufale-488ba4269/) ,[Rohan Managar](https://github.com/RohanMagar7)
+- Developed by [Pranav Sirsufale](https://www.linkedin.com/in/pranav-sirsufale-488ba4269/) ,[Rohan Magar](https://github.com/RohanMagar7)
 - Special thanks to [Dr. Bharti W. Gawali](https://bamu.irins.org/profile/57209) and the faculty and administrative staff for their input and testing feedback
 
 ---
