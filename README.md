@@ -306,7 +306,7 @@ mysql -u root -p law_college < {created unique database name}.sql
 For technical support or system maintenance:
 - 📧 Email: [pranavsirsfuale@gmail.com](mailto:pranavsirsfuale@gmail.com) | [pranav.sirsufale@antaris.global](mailto:pranav.sirsufale@antaris.global)
 - ☎️ Phone: (+91) 8482852301, (+91) 8308822538
-- 📚 Documentation: See the [wiki](https://github.com/pranavsirsufale/attendance_system) section of this repository
+- 📚 Documentation: See the [wiki](https://docs.google.com/document/d/e/2PACX-1vTUoNeKtTcvEG8-Ln_54hum8e_8CtpvEwIiEVRts9bbFMKT-Kl-K5vWpYVlBUNx0_yW5O2b94Z6KDop/pub?urp=gmail_link) section of this repository
 
 ## 📃 License
 
@@ -325,5 +325,6 @@ This software is proprietary and licensed exclusively to Manikchand Pahade law c
     <a href="https://hashnode.com/@pranavsirsufale">Hashnode</a> •
     <a href="https://www.linkedin.com/in/pranav-sirsufale-488ba4269/">Linkedin</a> •
     <a href="https://github.com/pranavsirsufale">Github</a>
+    <a href="https://docs.google.com/document/d/e/2PACX-1vTUoNeKtTcvEG8-Ln_54hum8e_8CtpvEwIiEVRts9bbFMKT-Kl-K5vWpYVlBUNx0_yW5O2b94Z6KDop/pub?urp=gmail_link">Manual of Attendance Portal<a>
   </p>
 </div>
