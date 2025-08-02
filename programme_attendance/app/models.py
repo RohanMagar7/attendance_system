@@ -9,37 +9,43 @@ class Semester(models.Model):
     subject = models.CharField(max_length=50)
 
 class Program(models.Model):
-    name = models.CharField(max_length=50, unique=True)  # e.g., "BALLB 5 Yr", "LLB 3 Yr"
-    duration_years = models.PositiveIntegerField()  # 3 or 5
+    name = models.CharField(max_length=50, unique=True)
+    duration_years = models.PositiveIntegerField()
+
     def __str__(self):
         return self.name
+
     class Meta:
         verbose_name = "Program"
         verbose_name_plural = "Programs"
 
 class Section(models.Model):
     program = models.ForeignKey(Program, on_delete=models.CASCADE, related_name="sections")
-    name = models.CharField(max_length=10)  # e.g., "Section A", "Section B"
-    year = models.PositiveIntegerField()  # 1, 2, 3, 4, 5
+    name = models.CharField(max_length=10)
+    year = models.PositiveIntegerField()
+
     def __str__(self):
         return f"{self.program} - Year {self.year} - {self.name}"
+
     class Meta:
         unique_together = ('program', 'year', 'name')
         verbose_name = "Section"
         verbose_name_plural = "Sections"
 
 class Subject(models.Model):
-    name = models.CharField(max_length=100 , unique=True,null= False , blank=False )  # e.g., "Law of Contract I"
-    is_law_subject = models.BooleanField(default=True , blank=False)  # True for law, False for non-law
-    semester = models.PositiveIntegerField()  # 1 to 10 (depending on program)
+    name = models.CharField(max_length=100 , unique=True,null= False , blank=False )
+    is_law_subject = models.BooleanField(default=True , blank=False)
+    semester = models.PositiveIntegerField()
+
     def __str__(self):
         return self.name
+
     class Meta:
         verbose_name = "Subject"
         verbose_name_plural = "Subjects"
 
 class Teacher(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)  # Authentication
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
@@ -53,11 +59,7 @@ class Teacher(models.Model):
 
 class Student(models.Model):
     # id = models.PositiveIntegerField(primary_key=True)
-    roll_number = models.CharField(
-        max_length=20,
-        # unique=True,
-        #validators=[RegexValidator(r'^(G|NG)24\d{4}$', 'Roll number must be G24xxxx or NG24xxxx')]
-    )  # e.g., G240001, NG240012
+    roll_number = models.CharField(max_length=20, unique=False)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=50,null=True, blank=True)
     email = models.EmailField(null=True, blank=True, unique=False)
@@ -74,7 +76,23 @@ class Student(models.Model):
             models.Index(fields=['roll_number']),
             models.Index(fields=['first_name', 'last_name']),
         ]
-        ordering = ['roll_number']  # <-- fixed typo here  
+        ordering = ['roll_number']
+
+class LectureSlot(models.Model):
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+
+    def clean(self):
+        if self.end_time <= self.start_time:
+            raise ValidationError("End time must be after start time")
+
+    def __str__(self):
+        return f"{self.start_time.strftime('%I:%M %p')} - {self.end_time.strftime('%I:%M %p')}"
+
+    class Meta:
+        verbose_name = "Lecture Slot"
+        verbose_name_plural = "Lecture Slots"
+        ordering = ['start_time']
 
 class Timetable(models.Model):
     DAY_CHOICES = [
@@ -84,19 +102,21 @@ class Timetable(models.Model):
         ('Thursday', 'Thursday'),
         ('Friday', 'Friday'),
         ('Saturday', 'Saturday'),
+        ('Sunday', "Sunday")
     ]
-    LECTURE_SLOTS = [
-    ('08:30:00', '08:30 AM - 09:30 AM'),
-    ('09:30:00', '09:30 AM - 10:30 AM'),
-    ('10:30:00', '10:30 AM - 11:30 AM'),
-    ('12:00:00', '12:00 PM - 01:00 PM'),
-    ('01:00:00', '01:00 PM - 02:00 PM'),
-    ]
+    # LECTURE_SLOTS = [
+    # ('08:30:00', '08:30 AM - 09:30 AM'),
+    # ('09:30:00', '09:30 AM - 10:30 AM'),
+    # ('10:30:00', '10:30 AM - 11:30 AM'),
+    # ('12:00:00', '12:00 PM - 01:00 PM'),
+    # ('01:00:00', '01:00 PM - 02:00 PM'),
+    # ]
     section = models.ForeignKey(Section, on_delete=models.CASCADE, related_name="timetable")
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name="timetable")
     teacher = models.ForeignKey(Teacher, on_delete=models.SET_NULL, null=True, related_name="timetable")
     day_of_week = models.CharField(max_length=9, choices=DAY_CHOICES)
-    start_time = models.TimeField(choices=LECTURE_SLOTS)  # Fixed lecture slots
+    # start_time = models.TimeField(choices=LECTURE_SLOTS)
+    start_time = models.ForeignKey(LectureSlot, on_delete=models.PROTECT, related_name="timetables")
     semester_start_date = models.DateField()
     semester_end_date = models.DateField()
     def __str__(self):
@@ -118,38 +138,16 @@ class Session(models.Model):
 
     def __str__(self):
         return f"{self.timetable} on {self.date} ({self.status})"
+
     class Meta:
         unique_together = ('timetable', 'date')
         verbose_name = "Session"
         verbose_name_plural = "Sessions"
 
-
-'''
-!! the first previous attendance model with string ( status )
-class Attendance(models.Model):
-    STATUS_CHOICES = [ ('Present', 'Present'), ('Absent', 'Absent'),]
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="attendance", db_index=True)
-    session = models.ForeignKey(Session, on_delete=models.CASCADE, related_name="attendance")
-    status = models.CharField(max_length=7, choices=STATUS_CHOICES, default='Absent')
-    # status = models.BooleanField(default=False , db_index= True)
-    timestamp = models.DateTimeField(db_index=True)
-    recorded_by = models.ForeignKey(Teacher, on_delete=models.SET_NULL, null=True, related_name="attendance_records")
-    def __str__(self):
-        return f"{self.student} - {self.session} - {self.status}"
-    class Meta:
-        unique_together = ('student', 'session')
-        verbose_name = "Attendance"
-        verbose_name_plural = "Attendance"
-    # def get_status_display(self):
-    #     return "Present" if self.status else 'Absent'
-
-'''
 class Attendance(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="attendance", db_index=True)
     session = models.ForeignKey(Session, on_delete=models.CASCADE, related_name="attendance", db_index=True)
-
     status = models.BooleanField(default=False, db_index=True)  # False = Absent, True = Present
-
     timestamp = models.DateTimeField(db_index=True)
     recorded_by = models.ForeignKey(Teacher, on_delete=models.SET_NULL, null=True,db_index= True ,  related_name="attendance_records")
 

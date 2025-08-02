@@ -50,6 +50,7 @@ function Calendar(admin, notifyUser) {
       const url = selectedSection ? `http://localhost:8000/api/calendar/?section_id=${selectedSection}` : 'http://localhost:8000/api/calendar/';
       const response = await axios.get(url, { headers: { Authorization: `Bearer ${token}` } });
       setSessions(response.data);
+      console.log(response)
       setError('');
     } catch (err) {
       console.error('Failed to fetch sessions:', err);
@@ -77,6 +78,7 @@ function Calendar(admin, notifyUser) {
         axios.get('http://localhost:8000/api/sections/', { headers: { Authorization: `Bearer ${token}` } }),
         axios.get('http://localhost:8000/api/time-slots/', { headers: { Authorization: `Bearer ${token}` } }),
       ]);
+
       setSections(sectionsRes.data);
       setTimeSlots(timeSlotsRes.data);
       if (timetableData.section && timetableData.semester) {

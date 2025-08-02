@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Teacher,Student, Subject , Program , Timetable , Session, Attendance , Section , CalendarException
+from .models import Teacher,Student, Subject , Program , Timetable , Session, Attendance , Section , CalendarException, LectureSlot
 
 class TeacherSerializer(serializers.ModelSerializer):
     class Meta:
@@ -27,7 +27,8 @@ class SubjectSerializer(serializers.ModelSerializer):
 class DailyScheduleSerializer(serializers.Serializer):
     day_of_week = serializers.ChoiceField(choices= Timetable.DAY_CHOICES)
     subject = serializers.PrimaryKeyRelatedField(queryset=Subject.objects.all())
-    start_time = serializers.ChoiceField(choices=Timetable.LECTURE_SLOTS)
+    # start_time = serializers.ChoiceField(choices=Timetable.LECTURE_SLOTS)
+    start_time = serializers.PrimaryKeyRelatedField(queryset=LectureSlot.objects.all())
 
 class CalendarExceptionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -47,14 +48,26 @@ class SectionSerializer(serializers.ModelSerializer):
         model = Section
         fields = ['id', 'name', 'year', 'program', 'available_semesters']
 
+class LectureSlotSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LectureSlot
+        fields = ['id', 'start_time', 'end_time']
+
 class TimetableSerializer(serializers.ModelSerializer):
     section = SectionSerializer()
     subject = SubjectSerializer()
     teacher = TeacherSerializer()
+    # time_slot = LectureSlotSerializer()
     semester = serializers.IntegerField(source='subject.semester', read_only=True)
+    start_time = serializers.CharField(source='start_time.__str__', read_only=True)
+    # start_time = LectureSlotSerializer()
+    # start_time = serializers.SerializerMethodField()
     class Meta:
         model = Timetable
         fields = ['id', 'section', 'teacher', 'subject', 'semester', 'day_of_week', 'start_time', 'semester_start_date', 'semester_end_date']
+
+    # def get_start_time(self, obj):
+    #     return str(obj.start_time) if obj.start_time else None
 
 class SessionSerializer(serializers.ModelSerializer):
     timetable = TimetableSerializer(read_only=True)
@@ -141,15 +154,16 @@ class TimetableCreateSerializer(serializers.Serializer):
     semester_start_date = serializers.DateField()
     semester_end_date = serializers.DateField()
     def validate_daily_schedules(self, value):
-        LECTURE_SLOTS = Timetable.LECTURE_SLOTS
+        # LECTURE_SLOTS = Timetable.LECTURE_SLOTS
+        # LECTURE_SLOTS = serializers.PrimaryKeyRelatedField(queryset=LectureSlot.objects.all())
         for schedule in value:
             required_fields = ['day_of_week', 'subject', 'start_time']
             if not all(field in schedule for field in required_fields):
                 raise serializers.ValidationError(f"Each schedule must include {required_fields}")
-            if schedule['day_of_week'] not in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']:
+            if schedule['day_of_week'] not in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']:
                 raise serializers.ValidationError("Invalid day of week")
-            if schedule['start_time'] not in [slot[0] for slot in LECTURE_SLOTS]:
-                raise serializers.ValidationError(f"Start time must be one of {[slot[0] for slot in LECTURE_SLOTS]}")
+            # if schedule['start_time'] not in [slot[0] for slot in LECTURE_SLOTS]:
+            #     raise serializers.ValidationError(f"Start time must be one of {[slot[0] for slot in LECTURE_SLOTS]}")
         return value
 
     def validate(self, data):

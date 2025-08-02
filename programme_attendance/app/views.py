@@ -16,12 +16,12 @@ from app.permissions import IsAdmin
 from django.db.models import Count, Q , F , ExpressionWrapper , FloatField , DecimalField, CharField , Value,Sum , Case, When, IntegerField
 from django.contrib.auth.models import User
 from datetime import datetime, timedelta
-from .models import Session , Program, Attendance, Teacher, Student, Subject, Timetable, CalendarException , Section
+from .models import Session , Program, Attendance, Teacher, Student, Subject, Timetable, CalendarException , Section, LectureSlot
 from .serializers import (
     SessionSerializer, AttendanceSerializer , TimetableCreateSerializer, TeacherSerializer, StudentSerializer,
     TimetableSerializer, CalendarExceptionSerializer, ProgramSerializer , SubjectSerializer , SectionSerializer
     , AdminTeacherSerializer , AdminStudentSerializer , AdminTimetableSerializer,AttendanceStatsSerializer,
-    StudentDetailSerializer, AttendanceSummarySerializer
+    StudentDetailSerializer, AttendanceSummarySerializer, LectureSlotSerializer
 )
 from django.db.models.functions import Concat
 from django.db import IntegrityError,transaction
@@ -321,7 +321,7 @@ class TeacherAttendanceStatsView(APIView):
         present=Count('session', filter=Q(status=True)),
         absent=Count('session', filter=Q(status=False))
     )
-    .order_by('student__roll_number')  # <-- Add this line
+    .order_by('student__roll_number')
 )
             stats = [
                 {
@@ -419,7 +419,7 @@ class TimetableViewSet(viewsets.ModelViewSet):
                 ).exists():
                     raise ValidationError(f"Teacher already scheduled on {day} at {schedule['start_time']} for this semester.")
 
-        day_of_week_map = {'Monday': 0, 'Tuesday': 1, 'Wednesday': 2, 'Thursday': 3, 'Friday': 4, 'Saturday': 5}
+        day_of_week_map = {'Monday': 0, 'Tuesday': 1, 'Wednesday': 2, 'Thursday': 3, 'Friday': 4, 'Saturday': 5, 'Sunday': 6}
         created_timetables = []
         for schedule in daily_schedules:
             timetable = Timetable.objects.create(
@@ -898,7 +898,19 @@ def get_subjects(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_time_slots(request):
-    time_slots = [slot[0] for slot in Timetable.LECTURE_SLOTS]
+    # time_slots = [slot[0] for slot in Timetable.LECTURE_SLOTS]
+    # return Response(time_slots)
+    # slots = LectureSlot.objects.all()
+    # serializer = LectureSlotSerializer(slots, many=True)
+    # return Response([{"time": f"{slot['start_time']} - {slot['end_time']}"} for slot in serializer.data])
+    slots = LectureSlot.objects.all()
+    serializer = LectureSlotSerializer(slots, many=True)
+    time_slots = [
+        (
+            f"{datetime.strptime(slot['start_time'], '%H:%M:%S').strftime('%I:%M %p')} - {datetime.strptime(slot['end_time'], '%H:%M:%S').strftime('%I:%M %p')}"
+        )
+        for slot in serializer.data
+    ]
     return Response(time_slots)
 
 class SectionSemesterWiseDataView(APIView):

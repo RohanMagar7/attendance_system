@@ -10,8 +10,8 @@ function TimetableForm({ onClose }) {
   const [teacher, setTeacher] = useState('');
   const [semester, setSemester] = useState('');
   const [semesters, setSemesters] = useState([]);
-  const [semesterStart, setSemesterStart] = useState(''); // No default
-  const [semesterEnd, setSemesterEnd] = useState('');     // No default
+  const [semesterStart, setSemesterStart] = useState('');
+  const [semesterEnd, setSemesterEnd] = useState('');  
   const [dailySchedules, setDailySchedules] = useState({
     Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [], Saturday: [],
   });
