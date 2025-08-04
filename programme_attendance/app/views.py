@@ -307,7 +307,7 @@ class TeacherAttendanceStatsView(APIView):
         absent=Count('session', filter=Q(status=False))
     )
     .order_by('student__roll_number')  # <-- Add this line
-)
+    )
             stats = [
                 {
                     'student_id': stat['student__id'],
@@ -344,7 +344,6 @@ class SessionViewSet(viewsets.ModelViewSet):
 
 class AttendanceViewSet(viewsets.ModelViewSet):
     queryset = Attendance.objects.all()
-
     serializer_class = AttendanceSerializer
     permission_classes = [IsAuthenticated]
 
@@ -447,13 +446,10 @@ class SingleSessionTimetableView(APIView):
             day_of_week = data['day_of_week']
             start_time = data['start_time']
             session_date = data['session_date']
-
-            # Validate date matches day_of_week
             day_of_week_map = {'Monday': 0, 'Tuesday': 1, 'Wednesday': 2, 'Thursday': 3, 'Friday': 4, 'Saturday': 5, 'Sunday': 6}
             if session_date.weekday() != day_of_week_map[day_of_week]:
                 return Response({"detail": f"Selected date {session_date} does not match {day_of_week}"}, status=status.HTTP_400_BAD_REQUEST)
 
-            # Check for conflicts
             if Timetable.objects.filter(
                 teacher=teacher,
                 day_of_week=day_of_week,
@@ -463,7 +459,6 @@ class SingleSessionTimetableView(APIView):
             ).exists():
                 return Response({"detail": f"Teacher already scheduled on {day_of_week} at {start_time}"}, status=status.HTTP_400_BAD_REQUEST)
 
-            # Create timetable with a single-day duration
             timetable = Timetable.objects.create(
                 section=section,
                 teacher=teacher,
@@ -474,7 +469,6 @@ class SingleSessionTimetableView(APIView):
                 semester_end_date=session_date
             )
 
-            # Create single session
             session = Session.objects.create(
                 timetable=timetable,
                 date=session_date,

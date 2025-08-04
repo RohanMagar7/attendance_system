@@ -8,20 +8,15 @@
 
 
 from pathlib import Path
+from datetime import timedelta
 
 APPEND_SLASH = True
-
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 SECRET_KEY = "django-insecure-^i)7vl*p4w&*4pd1snts7u-*ahrw3irm6$bei2$c1c-+@vks!!"
-
 DEBUG = False
 
-
 ALLOWED_HOSTS = ['http://localhost:5173','*']
-
 CORS_ALLOWED_ORIGINS = ['http://localhost:5173']
-
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -68,16 +63,13 @@ REST_FRAMEWORK = {
     ),
 }
 
-from datetime import timedelta
-
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': False,
-    'UPDATE_LAST_LOGIN': True,  # This ensures last_login updates
+    'UPDATE_LAST_LOGIN': True,
 }
-
 
 LOGGING = {
     'version': 1,
@@ -126,14 +118,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "programme_attendance.wsgi.application"
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
-
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
@@ -164,19 +148,11 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
-
 LANGUAGE_CODE = "en-us"
-
 TIME_ZONE = "UTC"
-
 USE_I18N = True
-
 USE_TZ = True
-
-
 STATIC_URL = "static/"
-
-
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 #                       ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄

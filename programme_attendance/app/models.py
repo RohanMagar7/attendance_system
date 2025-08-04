@@ -9,8 +9,8 @@ class Semester(models.Model):
     subject = models.CharField(max_length=50)
 
 class Program(models.Model):
-    name = models.CharField(max_length=50, unique=True)  # e.g., "BALLB 5 Yr", "LLB 3 Yr"
-    duration_years = models.PositiveIntegerField()  # 3 or 5
+    name = models.CharField(max_length=50, unique=True)
+    duration_years = models.PositiveIntegerField()
     def __str__(self):
         return self.name
     class Meta:
@@ -29,9 +29,9 @@ class Section(models.Model):
         verbose_name_plural = "Sections"
 
 class Subject(models.Model):
-    name = models.CharField(max_length=100 , unique=True,null= False , blank=False )  # e.g., "Law of Contract I"
-    is_law_subject = models.BooleanField(default=True , blank=False)  # True for law, False for non-law
-    semester = models.PositiveIntegerField()  # 1 to 10 (depending on program)
+    name = models.CharField(max_length=100 , unique=True,null= False , blank=False )
+    is_law_subject = models.BooleanField(default=True , blank=False)
+    semester = models.PositiveIntegerField()
     def __str__(self):
         return self.name
     class Meta:
@@ -39,7 +39,7 @@ class Subject(models.Model):
         verbose_name_plural = "Subjects"
 
 class Teacher(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)  # Authentication
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
@@ -52,12 +52,7 @@ class Teacher(models.Model):
         verbose_name_plural = "Teachers"
 
 class Student(models.Model):
-    # id = models.PositiveIntegerField(primary_key=True)
-    roll_number = models.CharField(
-        max_length=20,
-        # unique=True,
-        #validators=[RegexValidator(r'^(G|NG)24\d{4}$', 'Roll number must be G24xxxx or NG24xxxx')]
-    )  # e.g., G240001, NG240012
+    roll_number = models.CharField(max_length=20,)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=50,null=True, blank=True)
     email = models.EmailField(null=True, blank=True, unique=False)
@@ -74,7 +69,7 @@ class Student(models.Model):
             models.Index(fields=['roll_number']),
             models.Index(fields=['first_name', 'last_name']),
         ]
-        ordering = ['roll_number']  # <-- fixed typo here
+        ordering = ['roll_number']
 
 class Timetable(models.Model):
     DAY_CHOICES = [

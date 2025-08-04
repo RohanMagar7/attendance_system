@@ -4,30 +4,24 @@ import { useNavigate } from 'react-router-dom';
 import { Box, Card, CardContent, CircularProgress, Typography } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
 import { styled } from '@mui/material/styles';
-import { toast } from 'react-toastify'; // Import toast directly
+import { toast } from 'react-toastify';
 
-// StyledCard component, adapted from your PassStudents.jsx
-const StyledCard = styled(motion.create(Card))(({ theme }) => ({ // Wrap Card with motion for framer-motion animations
+const StyledCard = styled(motion.create(Card))(({ theme }) => ({
   borderRadius: '12px',
   boxShadow: theme.shadows[6],
   marginBottom: theme.spacing(3),
   width: '100%',
-  maxWidth: 450, // Adjust max-width as needed
-  margin: theme.spacing(2), // Add some margin around the card
+  maxWidth: 450,
+  margin: theme.spacing(2),
   textAlign: 'center',
   padding: theme.spacing(3),
 }));
 
-// Custom Button component (assuming you have one, if not, replace with a standard MUI Button)
-// If you don't have a custom Button.jsx, you can replace this with:
-// import { Button } from '@mui/material';
-// and remove the relative import.
-import Button from './Button'; // Adjust path if your Button component is elsewhere
-
+import Button from './Button';
 function GetBackup({ notifyUser }) {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
-  const [messageType, setMessageType] = useState(''); // 'success', 'error', 'info'
+  const [messageType, setMessageType] = useState('');
   const navigate = useNavigate();
   const handleBackupClick = async () => {
     setLoading(true);
@@ -36,11 +30,7 @@ function GetBackup({ notifyUser }) {
     notifyUser('Initiating database backup...', 'info');
 
     try {
-      // IMPORTANT: Retrieve the authentication token securely.
-      // This token is crucial for your Django backend's IsAdminUser permission.
-      // Make sure 'access_token' is the correct key used to store your token in localStorage after login.
       const token = localStorage.getItem('access_token');
-
       if (!token) {
         const errorMessage = 'Authentication token is missing. Please log in as an admin user.';
         setMessage(errorMessage);
@@ -50,19 +40,17 @@ function GetBackup({ notifyUser }) {
         return;
       }
 
-      // Send a POST request to your Django REST Framework backup endpoint
       const response = await axios.post(
-        'http://localhost:8000/api/backup/', // Ensure this URL matches your Django URL
-        {}, // Empty body for a POST request that triggers an action
+        'http://localhost:8000/api/backup/',
+        {},
         {
           headers: {
-            'Authorization': `Bearer ${token}`, // Use Bearer token for DRF
+            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
         }
       );
 
-      // Assuming your backend sends a success message in `response.data.message`
       setMessage(response.data.message || 'Database backup successfully initiated!');
       setMessageType('success');
       notifyUser(response.data.message || 'Database backup successfully initiated!', 'success');
@@ -80,13 +68,8 @@ function GetBackup({ notifyUser }) {
 
   return (
     <>
-
-
     <Box sx={{ p: 3, bgcolor: 'background.default', minHeight: '100vh', justifyContent: 'center', alignItems: 'center' }}>
-
     <Button onClick={() => navigate('/admin')}>Dashboard</Button>
-
-
     <Box sx={{ p: 3, bgcolor: 'background.default',display: "flex" , justifyContent: 'center', alignItems: 'center' }}>
 
 
@@ -99,7 +82,7 @@ function GetBackup({ notifyUser }) {
             Click the button below to generate a full backup of your MySQL database, including all tables and records.
           </Typography>
 
-          <form onSubmit={(e) => e.preventDefault()}> {/* Prevent default form submission */}
+          <form onSubmit={(e) => e.preventDefault()}>
             <Button
               variant="contained"
               onClick={handleBackupClick}
@@ -155,8 +138,6 @@ function GetBackup({ notifyUser }) {
           </AnimatePresence>
         </CardContent>
       </StyledCard>
-      {/* ToastContainer should typically be in your App.js or a higher-level component */}
-      {/* <ToastContainer /> */}
     </Box>
     </Box>
     </>

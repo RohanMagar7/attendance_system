@@ -90,7 +90,7 @@ function Login({setIsAdmin , notifyUser}) {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.2 }}
-          className="text-sm text-gray-600 dark:text-gray-300 mb-6"
+          className="text-md text-gray-600 text-indigo-900 dark:text-gray-300 mb-6"
         >
         Student Attendance Portal
         </motion.p>
@@ -106,7 +106,7 @@ function Login({setIsAdmin , notifyUser}) {
               placeholder="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-               className="w-full px-4 py-3 border-b-4 border-indigo-900 backdrop-blur-
+               className="w-full px-4 py-3 border-b-4 text-white border-indigo-900 backdrop-blur-
              focus:border-sky-500
              focus:outline-none focus:ring-0"
             />
@@ -121,7 +121,7 @@ function Login({setIsAdmin , notifyUser}) {
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-               className="w-full px-4 py-3 border-b-4 border-indigo-900 backdrop-blur-
+               className="w-full px-4 py-3 border-b-4 text-white border-indigo-900 backdrop-blur-
              invalid:border-pink-500 invalid:text-pink-600 focus:border-sky-500
              focus:outline-none focus:ring-0"
 
@@ -159,8 +159,10 @@ function Login({setIsAdmin , notifyUser}) {
           transition={{ duration: 0.4, delay: 0.5 }}
           className="mt-6"
         >
-          <p className="text-gray-500 dark:text-gray-400 text-sm">© 2025 MPLC Attendance System</p>
-          <span className="text-xs text-gray-400 dark:text-gray-500">Developed by Pran</span>
+
+          <p className="text-white-500  text-sm">© 2025 MPLC Attendance System</p>
+          {/* text-gray-400 dark: */}
+          <span className="text-xs text-white">Developed by Pran</span>
 
         </motion.div>
 
