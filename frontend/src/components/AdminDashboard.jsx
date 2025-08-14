@@ -653,7 +653,7 @@ function AdminDashboard({ notifyUser }) {
           </Link>
 
           {/* Card for Manage Timetables */}
-          {/* <Link to="/admin/timetables" className="w-full flex justify-center">
+          <Link to="/admin/timetables" className="w-full flex justify-center">
             <StyledCard
               whilehover={{ scale: 1.02 }}
               whiletap={{ scale: 0.98 }}
@@ -667,7 +667,7 @@ function AdminDashboard({ notifyUser }) {
                 <button className="card__button">View Timetables</button>
               </form>
             </StyledCard>
-          </Link> */}
+          </Link>
 
           {/* Card for Manage Sessions */}
           <Link to="/admin/sessions" className="w-full flex justify-center">

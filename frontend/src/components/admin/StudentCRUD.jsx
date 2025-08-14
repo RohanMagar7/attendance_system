@@ -113,6 +113,7 @@ function StudentCRUD({notifyUser}) {
       setSemesters(response.data.semesters);
       // console.log(`Semesters for section ${sectionId}:`, response.data.semesters);
     } catch (err) {
+      notifyUser(`Failed to load semester : ${err.message || err?.response?.data?.detail}`, "error")
       setError(`Failed to load semesters: ${err.response?.data?.detail || err.message}`);
       setSemesters([]);
     }
@@ -145,12 +146,13 @@ function StudentCRUD({notifyUser}) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("access_token");
-    if (!formData.section || !formData.semester || !formData.first_name || !formData.last_name || !formData.email) {
-      setError("Please fill all required fields: First Name, Last Name, Email, Section, and Semester");
+    if (!formData.section || !formData.semester || !formData.first_name ) {
+      setError("Please fill all required fields: First Name, Section, and Semester");
       return;
     }
     try {
       const payload = { ...formData };
+      console.log(payload)
       if (editingStudentId) {
         const response = await axios.put(
           `http://localhost:8000/api/admin/students/${editingStudentId}/`,
@@ -177,6 +179,7 @@ function StudentCRUD({notifyUser}) {
       fetchStudentsBySectionAndSemester(selectedSection, selectedSemester);
       setError("");
     } catch (err) {
+      notifyUser(`Failed to ${editingStudentId ? "update" : "add"} student: ${err.message || err.response?.data?.detail}`, "error")
       setError(`Failed to ${editingStudentId ? "update" : "add"} student: ${err.response?.data?.detail || err.message}`);
       console.error("Student operation error:", err.response?.data);
     }
@@ -208,7 +211,7 @@ function StudentCRUD({notifyUser}) {
         notifyUser(`Student ${studentId} deleted Successfully.`,'warning')
       }
       else if (response.status < 300  && response.status > 199){
-        notifyUser(`${response?.statusText}`)
+        notifyUser(`${response?.statusText}`, "warning")
       }
       fetchStudentsBySectionAndSemester(selectedSection, selectedSemester);
       setError("");
@@ -361,7 +364,7 @@ function StudentCRUD({notifyUser}) {
               value={formData.last_name}
               onChange={handleFormChange}
               className="w-full p-3 border border-indigo-200 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm focus:ring-2 focus:ring-indigo-400 dark:focus:ring-indigo-500 transition-all duration-200"
-              required
+
             />
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.7 }}>
@@ -373,7 +376,7 @@ function StudentCRUD({notifyUser}) {
               value={formData.email}
               onChange={handleFormChange}
               className="w-full p-3 border border-indigo-200 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm focus:ring-2 focus:ring-indigo-400 dark:focus:ring-indigo-500 transition-all duration-200"
-              required
+
             />
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.8 }}>

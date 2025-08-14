@@ -718,7 +718,7 @@ class MarkAttendanceView(generics.GenericAPIView):
             if session.timetable.teacher != teacher:
                 return Response({"error": "Not authorized to mark this session"}, status=status.HTTP_403_FORBIDDEN)
 
-            students = Student.objects.filter(section=session.timetable.section)
+            students = Student.objects.filter(section=session.timetable.section, semester=session.timetable.subject.semester)
             existing_attendance = Attendance.objects.filter(session=session).select_related('student')
 
             attendance_data = [
@@ -1157,6 +1157,7 @@ class AdminStudentViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsAdmin]
     queryset = Student.objects.all()
     serializer_class = AdminStudentSerializer
+    print(queryset)
     def get_queryset(self):
         queryset = super().get_queryset()
         section_id = self.request.query_params.get('section')
@@ -1171,6 +1172,7 @@ class AdminStudentViewSet(viewsets.ModelViewSet):
         section = validated_data['section']  # Now words with Primary related key
         semester = validated_data['semester']
         roll_number = validated_data.get('roll_number')
+        print(roll_number)
         if not roll_number:
             program_prefix = 'NG' if 'BALLB' in section.program.name else 'G'
             year_suffix = str(timezone.now().year)[-2:] # e.g. , "25" from 2025
@@ -1349,16 +1351,16 @@ class AdminTimetableViewSet(viewsets.ModelViewSet):
         self.perform_create(serializer)
         return Response(self.response_data, status = status.HTTP_201_CREATED)
 
-    def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', False)
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        # Use all created timetables from context for response
-        created_timetables = serializer.context.get('created_timetables', [serializer.instance])
-        response_serializer = TimetableSerializer(created_timetables, many=True)
-        return Response(response_serializer.data)
+    # def update(self, request, *args, **kwargs):
+    #     partial = kwargs.pop('partial', False)
+    #     instance = self.get_object()
+    #     serializer = self.get_serializer(instance, data=request.data, partial=partial)
+    #     serializer.is_valid(raise_exception=True)
+    #     self.perform_update(serializer)
+    #     # Use all created timetables from context for response
+    #     created_timetables = serializer.context.get('created_timetables', [serializer.instance])
+    #     response_serializer = TimetableSerializer(created_timetables, many=True)
+    #     return Response(response_serializer.data)
 
     '''
     def perform_update(self,serializer):
@@ -1382,29 +1384,45 @@ class AdminTimetableViewSet(viewsets.ModelViewSet):
 
     '''
 
+    # def perform_update(self, serializer):
+    #     instance = serializer.save()
+    #     related_timetables = Timetable.objects.filter(
+    #         section=instance.section,
+    #         teacher=instance.teacher,
+    #         semester_start_date=instance.semester_start_date,
+    #         semester_end_date=instance.semester_end_date
+    #     )
+    #     Session.objects.filter(timetable__in=related_timetables).delete()
+    #     day_of_week_map = {'Monday': 0, 'Tuesday': 1, 'Wednesday': 2, 'Thursday': 3, 'Friday': 4, 'Saturday': 5, 'Sunday': 6}
+    #     start_date = instance.semester_start_date
+    #     end_date = instance.semester_end_date
+    #     for timetable in related_timetables:
+    #         current_date = start_date
+    #         target_day = day_of_week_map[timetable.day_of_week]
+    #         while current_date <= end_date:
+    #             if current_date.weekday() == target_day:
+    #                 Session.objects.get_or_create(
+    #                     timetable=timetable,
+    #                     date=current_date,
+    #                     defaults={'status': 'Scheduled'}
+    #                 )
+    #             current_date += timedelta(days=1)
     def perform_update(self, serializer):
         instance = serializer.save()
-        related_timetables = Timetable.objects.filter(
-            section=instance.section,
-            teacher=instance.teacher,
-            semester_start_date=instance.semester_start_date,
-            semester_end_date=instance.semester_end_date
-        )
-        Session.objects.filter(timetable__in=related_timetables).delete()
-        day_of_week_map = {'Monday': 0, 'Tuesday': 1, 'Wednesday': 2, 'Thursday': 3, 'Friday': 4, 'Saturday': 5, 'Sunday': 6}
-        start_date = instance.semester_start_date
-        end_date = instance.semester_end_date
-        for timetable in related_timetables:
-            current_date = start_date
-            target_day = day_of_week_map[timetable.day_of_week]
-            while current_date <= end_date:
-                if current_date.weekday() == target_day:
-                    Session.objects.get_or_create(
-                        timetable=timetable,
-                        date=current_date,
-                        defaults={'status': 'Scheduled'}
-                    )
-                current_date += timedelta(days=1)
+
+        # OPTIONAL: If your Session model has a teacher field and you want to sync it, uncomment below
+        # Session.objects.filter(timetable=instance).update(teacher=instance.teacher)
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        response_serializer = TimetableSerializer(serializer.instance)
+        return Response(response_serializer.data, status=status.HTTP_200_OK)
+
 
     def destroy(self,request , *args,**kwargs):
         instance = self.get_object()

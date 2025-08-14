@@ -70,9 +70,6 @@ function TimetableCRUD({notifyUser}) {
         headers: { Authorization: `Bearer ${token}` },
       });
       setSections(response.data);
-
-
-
     } catch (err) {
       notifyUser("Sections fetch error:", err.response?.data || err.message , 'error');
     }
@@ -225,6 +222,7 @@ function TimetableCRUD({notifyUser}) {
       resetForm();
       fetchItems();
     } catch (err) {
+      notifyUser(`Failed to ${editingId ? "Update" : "Create"} timetable : ${err.message || err?.response?.data }`, "error")
       setError("Failed to save timetable: " + JSON.stringify(err.response?.data || "Unknown error"));
       console.error("Submit error:", err.response?.data || err.message);
     }
@@ -337,7 +335,7 @@ function TimetableCRUD({notifyUser}) {
             <option value="">Select Section</option>
             {sections.map((section) => (
               <option key={section.id} value={section.id}>
-                {section.name} - Year {section.year} ({section.program.name})
+                {section.name} - Year {section.year} - ( {section.program} )
               </option>
             ))}
           </motion.select>
@@ -506,6 +504,7 @@ function TimetableCRUD({notifyUser}) {
             <th className="p-3 text-left text-white font-semibold">Subject</th>
             <th className="p-3 text-left text-white font-semibold">Day</th>
             <th className="p-3 text-left text-white font-semibold">Time</th>
+            <th className="p-3 text-left text-white font-semibold">Sem</th>
             <th className="p-3 text-left text-white font-semibold">Start Date</th>
             <th className="p-3 text-left text-white font-semibold">End Date</th>
             <th className="p-3 text-left text-white font-semibold">Actions</th>
@@ -521,10 +520,12 @@ function TimetableCRUD({notifyUser}) {
               className="border-t border-indigo-100 dark:border-gray-700 hover:bg-indigo-50 dark:hover:bg-gray-700 transition-colors duration-200"
             >
               <td className="p-3 text-gray-700 dark:text-gray-200">{item.section.name}</td>
-              <td className="p-3 text-gray-700 dark:text-gray-200">{item.teacher.first_name} {item.teacher.last_name}</td>
+              <td className="p-3 text-gray-700 dark:text-gray-200">{item?.teacher?.first_name || item.id } {item?.teacher?.last_name || ""}</td>
               <td className="p-3 text-gray-700 dark:text-gray-200">{item.subject.name}</td>
               <td className="p-3 text-gray-700 dark:text-gray-200">{item.day_of_week}</td>
               <td className="p-3 text-gray-700 dark:text-gray-200">{item.start_time}</td>
+              <td className="p-3 text-gray-700 dark:text-gray-200">{item.semester}</td>
+
               <td className="p-3 text-gray-700 dark:text-gray-200">{item.semester_start_date}</td>
               <td className="p-3 text-gray-700 dark:text-gray-200">{item.semester_end_date}</td>
               <td className="p-3">
